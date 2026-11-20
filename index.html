@@ -137,15 +137,29 @@ header{position:sticky;top:0;z-index:40;background:rgba(251,245,236,.92);backdro
 footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;font-size:.88rem;border-top:1px solid rgba(255,255,255,.08)}
 
 /* Koszyk */
-.cart-btn{position:fixed;right:22px;bottom:22px;z-index:60;display:flex;align-items:center;gap:12px;background:var(--dark);color:#fff;border:0;border-radius:999px;padding:14px 22px 14px 16px;font-weight:700;cursor:pointer;box-shadow:0 18px 40px -14px rgba(43,29,22,.7);transition:transform .2s}
-.cart-btn:hover{transform:translateY(-3px)}
-.cart-btn .count{min-width:30px;height:30px;border-radius:999px;background:var(--terra);display:grid;place-items:center;font-size:.9rem;padding:0 8px}
-.cart-btn.bump{animation:bump .4s ease}
-@keyframes bump{40%{transform:scale(1.1)}}
+.nav-r{display:flex;align-items:center;gap:12px}
+.hcart{position:relative;width:46px;height:46px;flex:none;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-size:1.2rem;cursor:pointer;display:grid;place-items:center;transition:border-color .2s}
+.hcart:hover{border-color:var(--terra)}
+.hcart b{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--terra);color:#fff;font-size:.75rem;line-height:1;display:grid;place-items:center}
+.hcart b[hidden]{display:none}
+.cart-btn{position:fixed;left:50%;bottom:18px;z-index:60;width:min(520px,100% - 28px);display:flex;align-items:center;gap:14px;background:var(--dark);color:#fff;border:0;border-radius:18px;padding:12px 20px 12px 12px;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 18px 40px -14px rgba(43,29,22,.75);transform:translate(-50%,150%);opacity:0;visibility:hidden;transition:transform .35s ease,opacity .35s,visibility .35s}
+.cart-btn.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+.cart-btn.show:hover{transform:translate(-50%,-3px)}
+.cart-btn .count{min-width:36px;height:36px;flex:none;border-radius:11px;background:var(--terra);display:grid;place-items:center;font-size:.95rem;padding:0 8px}
+.cart-btn .lbl{flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-btn .tot{font-family:Fraunces,serif;font-size:1.2rem;white-space:nowrap}
+.cart-btn.bump .count{animation:bump .4s ease}
+@keyframes bump{40%{transform:scale(1.25)}}
+body.has-cart{padding-bottom:92px}
+.step{display:flex;align-items:center;gap:2px;background:var(--terra);border-radius:999px;padding:3px}
+.step button{width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:#fff;font-size:1.3rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.step button:hover{background:var(--terra-2)}
+.step span{min-width:20px;text-align:center;color:#fff;font-weight:700}
+.unit{margin-left:auto;color:var(--muted);font-size:.85rem}
 .overlay{position:fixed;inset:0;z-index:70;background:rgba(43,29,22,.45);opacity:0;pointer-events:none;transition:opacity .3s}
 .overlay.show{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;z-index:80;width:min(420px,100%);background:var(--cream);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s ease;box-shadow:-20px 0 50px -20px rgba(43,29,22,.4)}
-.drawer.show{transform:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:80;width:min(420px,100%);background:var(--cream);display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .35s ease,visibility .35s;box-shadow:-20px 0 50px -20px rgba(43,29,22,.4)}
+.drawer.show{transform:none;visibility:visible}
 .drawer-head{display:flex;justify-content:space-between;align-items:center;padding:22px 24px;border-bottom:1px solid var(--line)}
 .drawer-head h3{font-size:1.6rem}
 .x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:1.3rem;cursor:pointer}
@@ -195,7 +209,7 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
   .dish{grid-template-columns:48px 1fr auto;gap:12px;padding:14px}
   .dish-ico{width:48px;height:48px;font-size:1.4rem}
   .reserve{grid-template-columns:1fr}
-  .cart-btn{right:14px;bottom:14px}
+  .cart-btn{bottom:12px;padding:10px 16px 10px 10px}
   .nav .btn{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -214,7 +228,10 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
       <li><a href="#stolik">Rezerwacja</a></li>
       <li><a href="#kontakt">Kontakt</a></li>
     </ul>
-    <a href="#menu" class="btn btn-terra btn-sm">Zamów na wynos</a>
+    <div class="nav-r">
+      <a href="#menu" class="btn btn-terra btn-sm">Zamów na wynos</a>
+      <button class="hcart" id="hcart" type="button" aria-label="Koszyk">🛒<b id="hcart-count" hidden>0</b></button>
+    </div>
   </nav>
 </header>
 
@@ -315,7 +332,7 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
 
 <footer>© 2026 Pierogarnia u Aniołów · projekt demonstracyjny strony, nie jest to oficjalna strona firmy<br>Projekt graficzny i kod: © 2026 Sebastian Jakubiec – wszelkie prawa zastrzeżone. Kopiowanie i wykorzystanie bez zgody autora jest zabronione.</footer>
 
-<button class="cart-btn" id="cart-btn" aria-label="Otwórz koszyk"><span class="count" id="cart-count">0</span><span id="cart-total">Koszyk</span></button>
+<button class="cart-btn" id="cart-btn" type="button"><span class="count" id="cart-count">0</span><span class="lbl" id="cart-lbl" aria-live="polite">Zobacz zamówienie</span><span class="tot" id="cart-total">0 zł</span></button>
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer" aria-label="Koszyk" aria-hidden="true">
   <div class="drawer-head"><h3>Twoje zamówienie</h3><button class="x" id="close-cart" aria-label="Zamknij koszyk">×</button></div>
@@ -389,20 +406,42 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
         </div>
         <div class="dish-side">
           <b>${zl(d.price)}</b>
-          <button class="add" type="button" data-id="${d.id}" aria-label="Dodaj ${d.name} do koszyka">+</button>
+          <div data-ctl="${d.id}">${ctl(d)}</div>
         </div>
       </article>`).join('');
   }
 
-  $('dishes').addEventListener('click', e => {
-    const b = e.target.closest('.add');
-    if (!b) return;
-    const id = b.dataset.id;
-    cart[id] = (cart[id] || 0) + 1;
+  // Przycisk „+” albo licznik „− 2 +” przy daniu
+  function ctl(d) {
+    return cart[d.id]
+      ? `<div class="step"><button type="button" data-dec="${d.id}" aria-label="Odejmij: ${d.name}">−</button><span>${cart[d.id]}</span><button type="button" data-inc="${d.id}" aria-label="Dodaj jeszcze: ${d.name}">+</button></div>`
+      : `<button class="add" type="button" data-inc="${d.id}" aria-label="Dodaj ${d.name} do koszyka">+</button>`;
+  }
+  function syncDishes() {
+    document.querySelectorAll('[data-ctl]').forEach(el => { el.innerHTML = ctl(MENU.find(m => m.id == el.dataset.ctl)); });
+  }
+
+  let flashT;
+  function change(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
     save(); renderCart();
-    b.classList.add('added'); b.textContent = '✓';
-    setTimeout(() => { b.classList.remove('added'); b.textContent = '+'; }, 900);
-    const cb = $('cart-btn'); cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump');
+    if (delta > 0) {
+      $('cart-lbl').textContent = `✓ Dodano: ${MENU.find(m => m.id == id).name}`;
+      const cb = $('cart-btn'); cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump');
+      clearTimeout(flashT);
+      flashT = setTimeout(() => { $('cart-lbl').textContent = 'Zobacz zamówienie'; }, 1800);
+    }
+  }
+
+  $('dishes').addEventListener('click', e => {
+    const b = e.target.closest('[data-inc],[data-dec]');
+    if (!b) return;
+    const kind = b.dataset.inc ? 'inc' : 'dec', id = b.dataset[kind];
+    change(id, kind === 'inc' ? 1 : -1);
+    const box = document.querySelector(`[data-ctl="${id}"]`);
+    const next = box && (box.querySelector(`[data-${kind}]`) || box.querySelector('button'));
+    if (next) next.focus({ preventScroll: true });
   });
 
   function totals() {
@@ -414,12 +453,18 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
   function renderCart() {
     const { sub, fee, grand, count } = totals();
     $('cart-count').textContent = count;
-    $('cart-total').textContent = count ? zl(grand) : 'Koszyk';
+    $('cart-total').textContent = zl(sub);
+    $('cart-btn').classList.toggle('show', count > 0);
+    document.body.classList.toggle('has-cart', count > 0);
+    $('hcart-count').textContent = count;
+    $('hcart-count').hidden = !count;
+    $('hcart').setAttribute('aria-label', count ? `Koszyk: ${count} szt., ${zl(sub)}` : 'Koszyk (pusty)');
+    syncDishes();
     const ids = Object.keys(cart);
     $('cart-lines').innerHTML = ids.length ? ids.map(id => {
       const d = MENU.find(m => m.id == id);
       return `<div class="line"><b>${d.name}</b><span class="sum">${zl(d.price * cart[id])}</span>
-        <div class="qty"><button type="button" data-dec="${id}" aria-label="Mniej">−</button><span>${cart[id]}</span><button type="button" data-inc="${id}" aria-label="Więcej">+</button></div></div>`;
+        <div class="qty"><button type="button" data-dec="${id}" aria-label="Mniej">−</button><span>${cart[id]}</span><button type="button" data-inc="${id}" aria-label="Więcej">+</button><span class="unit">${zl(d.price)} / szt.</span></div></div>`;
     }).join('') : '<div class="cart-empty"><div>🧺</div>Koszyk jest pusty.<br>Dodaj coś pysznego z menu!</div>';
     $('sub').textContent = zl(sub);
     $('fee').textContent = mode === 'odbior' ? '—' : (fee ? zl(fee) : 'gratis');
@@ -434,9 +479,8 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
 
   $('cart-lines').addEventListener('click', e => {
     const inc = e.target.dataset.inc, dec = e.target.dataset.dec;
-    if (inc) cart[inc]++;
-    if (dec) { cart[dec]--; if (cart[dec] <= 0) delete cart[dec]; }
-    if (inc || dec) { save(); renderCart(); }
+    if (inc) change(inc, 1);
+    if (dec) change(dec, -1);
   });
 
   $('mode').addEventListener('click', e => {
@@ -449,6 +493,7 @@ footer{background:var(--dark);color:#9c8a7b;text-align:center;padding:28px 0;fon
   const openCart = () => { $('drawer').classList.add('show'); $('overlay').classList.add('show'); $('drawer').setAttribute('aria-hidden', 'false'); };
   const closeCart = () => { $('drawer').classList.remove('show'); $('overlay').classList.remove('show'); $('drawer').setAttribute('aria-hidden', 'true'); };
   $('cart-btn').addEventListener('click', openCart);
+  $('hcart').addEventListener('click', openCart);
   $('close-cart').addEventListener('click', closeCart);
   $('overlay').addEventListener('click', closeCart);
 
